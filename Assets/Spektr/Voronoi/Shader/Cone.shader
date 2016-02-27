@@ -18,21 +18,29 @@
         float3 normal : NORMAL;
     };
 
-    float nrand01(float seed, float salt)
+    float Random01(float seed, float salt)
     {
         float2 uv = float2(seed, salt);
         return frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453);
     }
 
+    float2 SamplingPoint(float2 uv)
+    {
+        float rx = Random01(uv.y, 0);
+        float ry = Random01(uv.y, 1);
+        float nx = snoise(float2(uv.y, _Time.x)) * 0.1;
+        float ny = snoise(float2(_Time.x, uv.y)) * 0.1;
+        return float2(rx + nx, ry + ny);
+    }
+
     v2f vert(appdata v)
     {
-        float4 offs = float4(
-            nrand01(v.uv.y, 0)* 2 + 0.04 * snoise(float2(v.uv.y, 0 + _Time.y * 0.8)),
-            nrand01(v.uv.y, 1)* 2 + 0.04 * snoise(float2(v.uv.y, 1 + _Time.y * 0.8)), 0, 0);
+        float2 uv = SamplingPoint(v.uv);
+
+        float4 offs = float4(uv * 2 - 1, 0, 0);
 
         v2f o;
-        //o.vertex = mul(UNITY_MATRIX_MVP, v.vertex + offs);
-        o.vertex = v.vertex + offs - float4(1, 1, 0, 0);
+        o.vertex = v.vertex + offs;
         o.normal = v.normal;
         return o;
     }
