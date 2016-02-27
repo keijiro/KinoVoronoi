@@ -50,19 +50,30 @@ namespace Spektr
 
         #region MonoBehaviour Functions
 
-        void Update()
-        {
-            Graphics.DrawMesh(
-                _mesh.sharedMesh,
-                transform.localToWorldMatrix,
-                coneMaterial, 0, null, 0);
-        }
-
         void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
+            var rtTemp = RenderTexture.GetTemporary(
+                source.width, source.height,
+                24, RenderTextureFormat.DefaultHDR
+            );
+
+            RenderTexture.active = rtTemp;
+            GL.Clear(true, true, Color.black);
+
+            coneMaterial.SetTexture("_Source", source);
+
+            for (var i = 0; i < 8; i++)
+            {
+                coneMaterial.SetPass(0);
+                coneMaterial.SetFloat("_RandomSeed", i * 5);
+                Graphics.DrawMeshNow(_mesh.sharedMesh, Matrix4x4.identity);
+            }
+
             contourMaterial.SetFloat("_LowThreshold", _lowThreshold);
             contourMaterial.SetFloat("_HighThreshold", _highThreshold);
-            Graphics.Blit(source, destination, contourMaterial, 0);
+            Graphics.Blit(rtTemp, destination, contourMaterial, 0);
+
+            RenderTexture.ReleaseTemporary(rtTemp);
         }
 
         #endregion
