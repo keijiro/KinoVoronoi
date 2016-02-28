@@ -6,6 +6,7 @@
     #include "SimplexNoise2D.cginc"
 
     sampler2D _Source;
+    float _Aspect;
     float _RandomSeed;
 
     struct appdata
@@ -38,8 +39,8 @@
     {
         float rx = Random01(uv.y, 0);
         float ry = Random01(uv.y, 1);
-        float nx = snoise(float2(uv.y, _Time.x)) * 0.5;
-        float ny = snoise(float2(_Time.x, uv.y)) * 0.5;
+        float nx = snoise(float2(uv.y, _Time.x)) * 0.2;
+        float ny = snoise(float2(_Time.x, uv.y)) * 0.2;
         return float2(rx + nx, ry + ny);
     }
 
@@ -47,14 +48,16 @@
     {
         float2 uv = SamplingPoint(v.uv);
 
+        float4 vc = v.vertex * float4(1, _Aspect, 1, 1);
+
         float4 offs = float4(uv * 2 - 1, 0, 0);
 
         half4 sc = tex2D(_Source, uv);
-        float level = dot(sc.rgb, 1) / 3;
-        offs += (level < Random01(v.uv.y, 2)) * 1000;
+        float level = Luminance(sc.rgb);
+        offs += (pow(level + 0.1, 2) < Random01(v.uv.y, 2)) * 1000;
 
         v2f o;
-        o.vertex = v.vertex + offs;
+        o.vertex = vc + offs;
         o.normal = v.normal;
         o.color = sc;
         return o;

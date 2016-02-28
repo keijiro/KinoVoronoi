@@ -71,7 +71,10 @@ namespace Spektr
 
             coneMaterial.SetTexture("_Source", source);
 
-            for (var i = 0; i < 4; i++)
+            var aspect = (float)source.width / source.height;
+            coneMaterial.SetFloat("_Aspect", aspect);
+
+            for (var i = 0; i < 6; i++)
             {
                 coneMaterial.SetPass(0);
                 coneMaterial.SetFloat("_RandomSeed", i * 5);

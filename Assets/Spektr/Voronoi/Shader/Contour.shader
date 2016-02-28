@@ -44,8 +44,9 @@
         float edge = saturate((ng - _LowThreshold) / (_HighThreshold - _LowThreshold));
 
         half3 src = tex2D(_ColorTexture, i.uv).rgb;
+        half lm = Luminance(src);
         src = LinearToGammaSpace(src);
-        src = (src + 1) * 0.5 * edge;
+        src = lerp(1, src, lm) * edge + (lm > 0.5);
         src = GammaToLinearSpace(src);
         return half4(src, 1);
     }
