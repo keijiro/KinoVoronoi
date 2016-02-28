@@ -2,22 +2,26 @@
 {
     Properties
     {
-        _MainTex ("-", 2D) = "" {}
+        _ColorTexture("", 2D) = ""{}
+        _NormalTexture("", 2D) = ""{}
     }
 
     CGINCLUDE
 
     #include "UnityCG.cginc"
 
-    sampler2D _MainTex;
-    float2 _MainTex_TexelSize;
+    sampler2D _ColorTexture;
+    float2 _ColorTexture_TexelSize;
+
+    sampler2D _NormalTexture;
+    float2 _NormalTexture_TexelSize;
 
     float _LowThreshold;
     float _HighThreshold;
 
     half4 frag(v2f_img i) : SV_Target
     {
-        float4 disp = float4(_MainTex_TexelSize.xy, -_MainTex_TexelSize.x, 0);
+        float4 disp = float4(_NormalTexture_TexelSize.xy, -_NormalTexture_TexelSize.x, 0);
 
         // four sample points for the roberts cross operator
         float2 uv0 = i.uv;           // TL
@@ -26,10 +30,10 @@
         float2 uv3 = i.uv + disp.wy; // BL
 
         // sample normal vector values from the g-buffer
-        float3 n0 = tex2D(_MainTex, uv0);
-        float3 n1 = tex2D(_MainTex, uv1);
-        float3 n2 = tex2D(_MainTex, uv2);
-        float3 n3 = tex2D(_MainTex, uv3);
+        float3 n0 = tex2D(_NormalTexture, uv0);
+        float3 n1 = tex2D(_NormalTexture, uv1);
+        float3 n2 = tex2D(_NormalTexture, uv2);
+        float3 n3 = tex2D(_NormalTexture, uv3);
 
         // roberts cross operator
         float3 ng1 = n1 - n0;
@@ -39,7 +43,11 @@
         // thresholding
         float edge = saturate((ng - _LowThreshold) / (_HighThreshold - _LowThreshold));
 
-        return edge;
+        half3 src = tex2D(_ColorTexture, i.uv).rgb;
+        src = LinearToGammaSpace(src);
+        src = (src + 1) * 0.5 * edge;
+        src = GammaToLinearSpace(src);
+        return half4(src, 1);
     }
 
     ENDCG

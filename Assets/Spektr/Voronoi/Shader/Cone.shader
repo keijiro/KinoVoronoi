@@ -19,6 +19,13 @@
     {
         float4 vertex : SV_POSITION;
         float3 normal : NORMAL;
+        half4 color : COLOR;
+    };
+
+    struct FragOutput
+    {
+        half4 color : COLOR0;
+        half4 normal : COLOR1;
     };
 
     float Random01(float seed, float salt)
@@ -42,29 +49,34 @@
 
         float4 offs = float4(uv * 2 - 1, 0, 0);
 
-        float level = dot(tex2D(_Source, uv).rgb, 1) / 3;
+        half4 sc = tex2D(_Source, uv);
+        float level = dot(sc.rgb, 1) / 3;
         offs += (level < Random01(v.uv.y, 2)) * 1000;
 
         v2f o;
         o.vertex = v.vertex + offs;
         o.normal = v.normal;
+        o.color = sc;
         return o;
     }
 
-    half4 frag (v2f i) : SV_Target
+    FragOutput frag(v2f i) : SV_Target
     {
-        return float4((i.normal + 1) * 0.5, 1);
+        FragOutput o;
+        o.color = i.color;
+        o.normal = float4((i.normal + 1) * 0.5, 1);
+        return o;
     }
 
     ENDCG
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
         Pass
         {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma target 3.0
             ENDCG
         }
     }
