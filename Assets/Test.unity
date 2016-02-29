@@ -211,7 +211,7 @@ Light:
   serializedVersion: 6
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: .629999995
+  m_Intensity: .800000012
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -258,6 +258,7 @@ GameObject:
   - 124: {fileID: 1468682681}
   - 81: {fileID: 1468682680}
   - 114: {fileID: 1468682679}
+  - 114: {fileID: 1468682685}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -276,8 +277,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de9b4ef57b77e448eab047d55678cc97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lowThreshold: .00400000019
-  _highThreshold: .00400000019
+  _lineColor: {r: .338235319, g: 0, b: 0, a: 1}
+  _cellColor: {r: 1, g: 1, b: 1, a: 1}
+  _bgColor: {r: .0491998158, g: .0629131123, b: .102941155, a: 1}
+  _lowThreshold: .0500000007
+  _highThreshold: 1
+  _cellExponent: 2.79999995
+  _cellHighlight: .699999988
+  _iteration: 3
   _mesh: {fileID: 11400000, guid: 6dde5c461cd9840b2880664de35361cb, type: 2}
   _coneShader: {fileID: 4800000, guid: 20b06a1ffeeb448e7adb1f2e9cfca618, type: 3}
   _contourShader: {fileID: 4800000, guid: 6ff59bb81ef864ffa8fa74fc0cb4f4df, type: 3}
@@ -311,7 +318,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: .0220588446, g: .0220588446, b: .0220588446, a: 0}
+  m_BackGroundColor: {r: .0588235259, g: .0588235259, b: .0588235259, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -327,7 +334,7 @@ Camera:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: -1
+  m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
@@ -348,6 +355,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 890273855}
   m_RootOrder: 0
+--- !u!114 &1468682685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1468682678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fc18a55c333d51489e5ee49b3cbff50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _falloff: .400000006
+  _shader: {fileID: 4800000, guid: 89a223cbeee1935419811f8736c0a9b3, type: 3}
 --- !u!1001 &1963176788
 Prefab:
   m_ObjectHideFlags: 0
