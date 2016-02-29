@@ -277,14 +277,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de9b4ef57b77e448eab047d55678cc97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lineColor: {r: .338235319, g: 0, b: 0, a: 1}
+  _lineColor: {r: .463235319, g: 0, b: 0, a: 1}
   _cellColor: {r: 1, g: 1, b: 1, a: 1}
-  _bgColor: {r: .0491998158, g: .0629131123, b: .102941155, a: 1}
-  _lowThreshold: .0500000007
-  _highThreshold: 1
-  _cellExponent: 2.79999995
-  _cellHighlight: .699999988
-  _iteration: 3
+  _backgroundColor: {r: .102076121, g: .102827817, b: .117647052, a: 1}
+  _rangeMin: .200000003
+  _rangeMax: 1
+  _cellExponent: 3.79999995
+  _cellThreshold: .699999988
+  _iteration: 4
   _mesh: {fileID: 11400000, guid: 6dde5c461cd9840b2880664de35361cb, type: 2}
   _coneShader: {fileID: 4800000, guid: 20b06a1ffeeb448e7adb1f2e9cfca618, type: 3}
   _contourShader: {fileID: 4800000, guid: 6ff59bb81ef864ffa8fa74fc0cb4f4df, type: 3}

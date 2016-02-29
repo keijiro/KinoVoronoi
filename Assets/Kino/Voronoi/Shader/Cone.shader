@@ -30,8 +30,8 @@ Shader "Hidden/Kino/Voronoi/Cone"
 
     sampler2D _Source;
     float _Aspect;
-    float _LowThreshold;
-    float _HighThreshold;
+    float _RangeMin;
+    float _RangeMax;
     float _RandomSeed;
 
     struct appdata
@@ -85,9 +85,11 @@ Shader "Hidden/Kino/Voronoi/Cone"
         // normal vector (remap position to 0-1 range)
         float3 vnrm = v.vertex.xyz * float3(0.5, 0.5, 1) + float3(0.5, 0.5, 0);
 
+        // get a threshold randomly within the value range
+        float thr = lerp(_RangeMin, _RangeMax, Random01(id, 2));
+
         // sample source color and reject the vertex if it's under the threshold
         half4 col = tex2D(_Source, spos);
-        float thr = lerp(_LowThreshold, _HighThreshold, Random01(id, 2));
         vpos.xy += (Luminance(col.rgb) < thr) * 10000;
 
         // shader output

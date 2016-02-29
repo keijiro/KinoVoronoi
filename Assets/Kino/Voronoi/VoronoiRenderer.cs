@@ -29,38 +29,90 @@ namespace Kino
     [ExecuteInEditMode]
     public class VoronoiRenderer : MonoBehaviour
     {
-        #region Private resources
+        #region Editable properties
+
+        /// Line color
+        Color lineColor {
+            get { return _lineColor; }
+            set { _lineColor = value; }
+        }
 
         [SerializeField, ColorUsage(false)]
         Color _lineColor = Color.white;
 
+        /// Cell color
+        Color cellColor {
+            get { return _cellColor; }
+            set { _cellColor = value; }
+        }
+
         [SerializeField, ColorUsage(false)]
         Color _cellColor = Color.white;
 
+        /// Background color
+        Color backgroundColor {
+            get { return _backgroundColor; }
+            set { _backgroundColor = value; }
+        }
+
         [SerializeField, ColorUsage(false)]
-        Color _bgColor = Color.black;
+        Color _backgroundColor = Color.black;
+
+        /// Minimum value of the input range
+        float rangeMin {
+            get { return _rangeMin; }
+            set { _rangeMin = value; }
+        }
 
         [SerializeField, Range(0, 1)]
-        float _lowThreshold = 0;
+        float _rangeMin = 0;
+
+        /// Maximum value of the input range
+        float rangeMax {
+            get { return _rangeMax; }
+            set { _rangeMax = value; }
+        }
 
         [SerializeField, Range(0, 1)]
-        float _highThreshold = 1;
+        float _rangeMax = 1;
+
+        /// Coefficient for the exponential gradient curve
+        float cellExponent {
+            get { return _cellExponent; }
+            set { _cellExponent = value; }
+        }
 
         [SerializeField, Range(1, 10)]
         float _cellExponent = 1;
 
+        /// Threshold for cell highlighting
+        float cellThreshold {
+            get { return _cellThreshold; }
+            set { _cellThreshold = value; }
+        }
+
         [SerializeField, Range(0, 1)]
-        float _cellHighlight = 0.8f;
+        float _cellThreshold = 0.8f;
+
+        /// Determines how many time it repeats the process
+        int iteration {
+            get { return _iteration; }
+            set { _iteration = value; }
+        }
 
         [SerializeField]
         int _iteration = 4;
 
-        [SerializeField]
-        VoronoiMesh _mesh;
+        #endregion
+        
+        #region Private properties
 
+        // internal references to related assets
+        [SerializeField] VoronoiMesh _mesh;
         [SerializeField] Shader _coneShader;
         [SerializeField] Shader _contourShader;
 
+        // cone shader material
         Material coneMaterial {
             get {
                 if (_coneMaterial == null) {
@@ -74,6 +126,7 @@ namespace Kino
 
         Material _coneMaterial;
 
+        // contour shader material
         Material contourMaterial {
             get {
                 if (_contourMaterial == null) {
@@ -118,14 +171,14 @@ namespace Kino
             coneMaterial.SetTexture("_Source", source);
             var aspect = (float)source.width / source.height;
             coneMaterial.SetFloat("_Aspect", aspect);
-            coneMaterial.SetFloat("_LowThreshold", _lowThreshold);
-            coneMaterial.SetFloat("_HighThreshold", _highThreshold);
+            coneMaterial.SetFloat("_RangeMin", _rangeMin);
+            coneMaterial.SetFloat("_RangeMax", _rangeMax);
 
             // draw cones repeatedly
             for (var i = 0; i < _iteration; i++)
             {
                 coneMaterial.SetPass(0);
-                coneMaterial.SetFloat("_RandomSeed", i * 5);
+                coneMaterial.SetFloat("_RandomSeed", i * 10);
                 Graphics.DrawMeshNow(_mesh.sharedMesh, Matrix4x4.identity);
             }
 
@@ -134,9 +187,9 @@ namespace Kino
             contourMaterial.SetTexture("_NormalTexture", rtNormal);
             contourMaterial.SetColor("_LineColor", _lineColor.gamma);
             contourMaterial.SetColor("_CellColor", _cellColor.gamma);
-            contourMaterial.SetColor("_BgColor", _bgColor.gamma);
+            contourMaterial.SetColor("_BgColor", _backgroundColor.gamma);
             contourMaterial.SetFloat("_CellExponent", _cellExponent);
-            contourMaterial.SetFloat("_CellThreshold", _cellHighlight);
+            contourMaterial.SetFloat("_CellThreshold", _cellThreshold);
 
             // contour filter
             Graphics.Blit(null, destination, contourMaterial, 0);
