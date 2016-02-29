@@ -4,6 +4,9 @@
     {
         _ColorTexture("", 2D) = ""{}
         _NormalTexture("", 2D) = ""{}
+        _LineColor("", Color) = (1, 1, 1)
+        _CellColor("", Color) = (1, 1, 1)
+        _BgColor("", Color) = (0, 0, 0)
     }
 
     CGINCLUDE
@@ -16,12 +19,16 @@
     sampler2D _NormalTexture;
     float2 _NormalTexture_TexelSize;
 
-    float _LowThreshold;
-    float _HighThreshold;
+    half3 _LineColor;
+    half3 _CellColor;
+    half3 _BgColor;
+
+    float _CellExponent;
+    float _CellThreshold;
 
     half4 frag(v2f_img i) : SV_Target
     {
-        float4 disp = float4(_NormalTexture_TexelSize.xy, -_NormalTexture_TexelSize.x, 0);
+        float4 disp = _NormalTexture_TexelSize.xyxy * float4(1, 1, -1, 0);
 
         // four sample points for the roberts cross operator
         float2 uv0 = i.uv;           // TL
@@ -41,14 +48,16 @@
         float ng = sqrt(dot(ng1, ng1) + dot(ng2, ng2));
 
         // thresholding
-        float edge = saturate((ng - _LowThreshold) / (_HighThreshold - _LowThreshold));
+        float edge = ng > _NormalTexture_TexelSize.x * 2.5;
 
+        // fill the cell if source color is high
         half3 src = tex2D(_ColorTexture, i.uv).rgb;
-        half lm = Luminance(src);
-        src = LinearToGammaSpace(src);
-        src = lerp(1, src, lm) * edge + (lm > 0.5);
-        src = GammaToLinearSpace(src);
-        return half4(src, 1);
+        half fill = pow(Luminance(src), _CellExponent);
+        fill = min(fill + (Luminance(src) > _CellThreshold), 1);
+
+        // combine results
+        half3 cf = lerp(lerp(_BgColor, _CellColor, fill), _LineColor, edge);
+        return half4(GammaToLinearSpace(cf), 1);
     }
 
     ENDCG

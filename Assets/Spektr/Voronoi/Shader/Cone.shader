@@ -7,12 +7,13 @@
 
     sampler2D _Source;
     float _Aspect;
+    float _LowThreshold;
+    float _HighThreshold;
     float _RandomSeed;
 
     struct appdata
     {
         float4 vertex : POSITION;
-        float3 normal : NORMAL;
         float2 uv : TEXCOORD0;
     };
 
@@ -29,37 +30,48 @@
         half4 normal : COLOR1;
     };
 
-    float Random01(float seed, float salt)
+    // PRNG function (0-1 range)
+    float Random01(float seed1, float seed2)
     {
-        float2 uv = float2(seed, salt + _RandomSeed);
+        float2 uv = float2(seed1, seed2 + _RandomSeed);
         return frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453);
     }
 
-    float2 SamplingPoint(float2 uv)
+    // Sample point generator
+    float2 SamplePoint(float id)
     {
-        float rx = Random01(uv.y, 0);
-        float ry = Random01(uv.y, 1);
-        float nx = snoise(float2(uv.y, _Time.x)) * 0.2;
-        float ny = snoise(float2(_Time.x, uv.y)) * 0.2;
+        float rx = Random01(id, 0);
+        float ry = Random01(id, 1);
+        float nx = snoise(float2(id, _Time.x)) * 0.2;
+        float ny = snoise(float2(_Time.x, id)) * 0.2;
         return float2(rx + nx, ry + ny);
     }
 
     v2f vert(appdata v)
     {
-        float2 uv = SamplingPoint(v.uv);
+        // vertex id
+        float id = v.uv.y;
 
-        float4 vc = v.vertex * float4(1, _Aspect, 1, 1);
+        // sample point
+        float2 spos = SamplePoint(id);
 
-        float4 offs = float4(uv * 2 - 1, 0, 0);
+        // cone vertex position (without transfomation)
+        float4 vpos = v.vertex * float4(2, _Aspect * 2, 1, 1);
+        vpos.xy += spos * 2 - 1;
 
-        half4 sc = tex2D(_Source, uv);
-        float level = Luminance(sc.rgb);
-        offs += (pow(level + 0.1, 2) < Random01(v.uv.y, 2)) * 1000;
+        // normal vector (remap position to 0-1 range)
+        float3 vnrm = v.vertex.xyz * float3(0.5, 0.5, 1) + float3(0.5, 0.5, 0);
 
+        // sample source color and reject the vertex if it's under the threshold
+        half4 col = tex2D(_Source, spos);
+        float thr = lerp(_LowThreshold, _HighThreshold, Random01(id, 2));
+        vpos.xy += (Luminance(col.rgb) < thr) * 10000;
+
+        // shader output
         v2f o;
-        o.vertex = vc + offs;
-        o.normal = v.normal;
-        o.color = sc;
+        o.vertex = vpos;
+        o.normal = vnrm;
+        o.color = col;
         return o;
     }
 
@@ -67,7 +79,7 @@
     {
         FragOutput o;
         o.color = i.color;
-        o.normal = float4((i.normal + 1) * 0.5, 1);
+        o.normal = float4(i.normal, 1);
         return o;
     }
 

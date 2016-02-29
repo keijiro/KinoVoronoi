@@ -42,21 +42,21 @@ namespace Spektr
 
             _mesh.Clear();
 
-            var v_per_c = Mathf.Max(_coneResolution, 6); // vertices per cone
+            var v_per_c = Mathf.Max(_coneResolution, 6); // vertices on circle
             var c_count = Mathf.Max(_pointCount, 1);     // cone count
 
-            var v_array = new List<Vector3>((1 + v_per_c) * c_count);
-            var t_array = new List<Vector2>((1 + v_per_c) * c_count);
+            var v_array = new List<Vector3>((v_per_c + 1) * c_count);
+            var t_array = new List<Vector2>((v_per_c + 1) * c_count);
             var i_array = new List<int>(v_per_c * 3 * c_count);
 
             // vertex array: first cone
-            v_array.Add(-Vector3.forward);
+            v_array.Add(Vector3.zero);
             t_array.Add(Vector2.zero);
 
             for (var v_i = 0; v_i < v_per_c; v_i++)
             {
                 var r = Mathf.PI * 2 / v_per_c * v_i;
-                v_array.Add(new Vector3(Mathf.Sin(r), Mathf.Cos(r), 0));
+                v_array.Add(new Vector3(Mathf.Sin(r), Mathf.Cos(r), 1));
                 t_array.Add(new Vector2(v_i + 1, 0));
             }
 
@@ -73,7 +73,7 @@ namespace Spektr
             // index array
             for (var c_i = 0; c_i < c_count; c_i++)
             {
-                var offs = (1 + v_per_c) * c_i;
+                var offs = (v_per_c + 1) * c_i;
                 for (var v_i = 0; v_i < v_per_c; v_i++)
                 {
                     i_array.Add(offs);
@@ -90,7 +90,6 @@ namespace Spektr
             _mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 1000);
 
             _mesh.Optimize();
-            _mesh.RecalculateNormals();
             _mesh.UploadMeshData(true);
         }
 
