@@ -27,8 +27,8 @@ using UnityEditor;
 namespace Kino
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(VoronoiRenderer))]
-    public class VoronoiRendererEditor : Editor
+    [CustomEditor(typeof(Voronoi))]
+    public class VoronoiEditor : Editor
     {
         SerializedProperty _lineColor;
         SerializedProperty _cellColor;

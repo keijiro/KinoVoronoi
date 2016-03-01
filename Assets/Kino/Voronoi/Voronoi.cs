@@ -27,7 +27,7 @@ using System.Collections;
 namespace Kino
 {
     [ExecuteInEditMode]
-    public class VoronoiRenderer : MonoBehaviour
+    public class Voronoi : MonoBehaviour
     {
         #region Editable properties
 
