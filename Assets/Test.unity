@@ -20,18 +20,18 @@ RenderSettings:
   m_FogDensity: .00999999978
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: .211999997, g: .226999998, b: .259000003, a: 1}
-  m_AmbientEquatorColor: {r: .114, g: .125, b: .133000001, a: 1}
+  m_AmbientSkyColor: {r: .447880626, g: .48328793, b: .558823526, a: 1}
+  m_AmbientEquatorColor: {r: .329530716, g: .364368975, b: .389705896, a: 1}
   m_AmbientGroundColor: {r: .0469999984, g: .0430000015, b: .0350000001, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_AmbientMode: 1
+  m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: .5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
   m_HaloTexture: {fileID: 0}
   m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
-  m_DefaultReflectionMode: 0
+  m_DefaultReflectionMode: 1
   m_DefaultReflectionResolution: 128
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
@@ -277,14 +277,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de9b4ef57b77e448eab047d55678cc97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lineColor: {r: .463235319, g: 0, b: 0, a: 1}
+  _lineColor: {r: 1, g: 0, b: 0, a: .472000003}
   _cellColor: {r: 1, g: 1, b: 1, a: 1}
-  _backgroundColor: {r: .102076121, g: .102827817, b: .117647052, a: 1}
-  _rangeMin: .200000003
+  _backgroundColor: {r: 0, g: 0, b: 0, a: 1}
+  _rangeMin: .0900000036
   _rangeMax: 1
-  _cellExponent: 3.79999995
-  _cellThreshold: .699999988
-  _iteration: 4
+  _cellExponent: 5.76999998
+  _iteration: 3
+  _opacity: 1
   _mesh: {fileID: 11400000, guid: 6dde5c461cd9840b2880664de35361cb, type: 2}
   _coneShader: {fileID: 4800000, guid: 20b06a1ffeeb448e7adb1f2e9cfca618, type: 3}
   _contourShader: {fileID: 4800000, guid: 6ff59bb81ef864ffa8fa74fc0cb4f4df, type: 3}
@@ -366,7 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc18a55c333d51489e5ee49b3cbff50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _falloff: .400000006
+  _falloff: .50999999
   _shader: {fileID: 4800000, guid: 89a223cbeee1935419811f8736c0a9b3, type: 3}
 --- !u!1001 &1963176788
 Prefab:

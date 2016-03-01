@@ -26,6 +26,7 @@ Shader "Hidden/Kino/Voronoi/Cone"
     CGINCLUDE
 
     #include "UnityCG.cginc"
+    #include "Common.cginc"
     #include "SimplexNoise2D.cginc"
 
     sampler2D _Source;
@@ -89,14 +90,14 @@ Shader "Hidden/Kino/Voronoi/Cone"
         float thr = lerp(_RangeMin, _RangeMax, Random01(id, 2));
 
         // sample source color and reject the vertex if it's under the threshold
-        half4 col = tex2D(_Source, spos);
-        vpos.xy += (Luminance(col.rgb) < thr) * 10000;
+        half3 col = tex2D(_Source, spos).rgb;
+        vpos.xy += (Luma(col) < thr) * 10000;
 
         // shader output
         v2f o;
         o.vertex = vpos;
         o.normal = vnrm;
-        o.color = col;
+        o.color = half4(col, 0);
         return o;
     }
 

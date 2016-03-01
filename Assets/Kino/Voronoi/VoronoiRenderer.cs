@@ -37,7 +37,7 @@ namespace Kino
             set { _lineColor = value; }
         }
 
-        [SerializeField, ColorUsage(false)]
+        [SerializeField]
         Color _lineColor = Color.white;
 
         /// Cell color
@@ -85,15 +85,6 @@ namespace Kino
         [SerializeField, Range(1, 10)]
         float _cellExponent = 1;
 
-        /// Threshold for cell highlighting
-        float cellThreshold {
-            get { return _cellThreshold; }
-            set { _cellThreshold = value; }
-        }
-
-        [SerializeField, Range(0, 1)]
-        float _cellThreshold = 0.8f;
-
         /// Determines how many time it repeats the process
         int iteration {
             get { return _iteration; }
@@ -102,6 +93,15 @@ namespace Kino
 
         [SerializeField]
         int _iteration = 4;
+
+        /// Opacity level (blend ratio)
+        float opacity {
+            get { return _opacity; }
+            set { _opacity = value; }
+        }
+
+        [SerializeField, Range(0, 1)]
+        float _opacity = 1;
 
         #endregion
         
@@ -146,6 +146,9 @@ namespace Kino
 
         void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
+            bool isLinear =
+                QualitySettings.activeColorSpace == ColorSpace.Linear;
+
             // temporary color buffer
             var rtColor = RenderTexture.GetTemporary(
                 source.width, source.height,
@@ -185,14 +188,24 @@ namespace Kino
             // set up the contour shader
             contourMaterial.SetTexture("_ColorTexture", rtColor);
             contourMaterial.SetTexture("_NormalTexture", rtNormal);
-            contourMaterial.SetColor("_LineColor", _lineColor.gamma);
-            contourMaterial.SetColor("_CellColor", _cellColor.gamma);
-            contourMaterial.SetColor("_BgColor", _backgroundColor.gamma);
+            contourMaterial.SetColor("_LineColor", _lineColor);
+
+            if (isLinear)
+            {
+                contourMaterial.SetColor("_CellColorGamma", _cellColor.gamma);
+                contourMaterial.SetColor("_BgColorGamma", _backgroundColor.gamma);
+            }
+            else
+            {
+                contourMaterial.SetColor("_CellColorGamma", _cellColor);
+                contourMaterial.SetColor("_BgColorGamma", _backgroundColor);
+            }
+
             contourMaterial.SetFloat("_CellExponent", _cellExponent);
-            contourMaterial.SetFloat("_CellThreshold", _cellThreshold);
+            contourMaterial.SetFloat("_Blend", _opacity);
 
             // contour filter
-            Graphics.Blit(null, destination, contourMaterial, 0);
+            Graphics.Blit(source, destination, contourMaterial, 0);
 
             // dispose temporary buffers
             RenderTexture.ReleaseTemporary(rtColor);

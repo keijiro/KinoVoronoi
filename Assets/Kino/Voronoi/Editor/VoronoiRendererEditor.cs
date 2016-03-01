@@ -36,8 +36,8 @@ namespace Kino
         SerializedProperty _rangeMin;
         SerializedProperty _rangeMax;
         SerializedProperty _cellExponent;
-        SerializedProperty _cellThreshold;
         SerializedProperty _iteration;
+        SerializedProperty _opacity;
 
         void OnEnable()
         {
@@ -47,8 +47,8 @@ namespace Kino
             _rangeMin = serializedObject.FindProperty("_rangeMin");
             _rangeMax = serializedObject.FindProperty("_rangeMax");
             _cellExponent = serializedObject.FindProperty("_cellExponent");
-            _cellThreshold = serializedObject.FindProperty("_cellThreshold");
             _iteration = serializedObject.FindProperty("_iteration");
+            _opacity = serializedObject.FindProperty("_opacity");
         }
 
         public override void OnInspectorGUI()
@@ -58,6 +58,7 @@ namespace Kino
             EditorGUILayout.PropertyField(_lineColor);
             EditorGUILayout.PropertyField(_backgroundColor);
             EditorGUILayout.PropertyField(_iteration);
+            EditorGUILayout.PropertyField(_opacity);
 
             EditorGUILayout.Space();
 
@@ -73,7 +74,6 @@ namespace Kino
             EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(_cellColor, new GUIContent("Fill Color"));
             EditorGUILayout.PropertyField(_cellExponent, new GUIContent("Exponent"));
-            EditorGUILayout.PropertyField(_cellThreshold, new GUIContent("Threshold"));
             EditorGUI.indentLevel--;
 
             serializedObject.ApplyModifiedProperties();

@@ -25,29 +25,28 @@ Shader "Hidden/Kino/Voronoi/Contour"
 {
     Properties
     {
+        _MainTex("", 2D) = ""{}
         _ColorTexture("", 2D) = ""{}
         _NormalTexture("", 2D) = ""{}
         _LineColor("", Color) = (1, 1, 1)
-        _CellColor("", Color) = (1, 1, 1)
-        _BgColor("", Color) = (0, 0, 0)
     }
 
     CGINCLUDE
 
     #include "UnityCG.cginc"
+    #include "Common.cginc"
 
+    sampler2D _MainTex;
     sampler2D _ColorTexture;
-    float2 _ColorTexture_TexelSize;
-
     sampler2D _NormalTexture;
     float2 _NormalTexture_TexelSize;
 
-    half3 _LineColor;
-    half3 _CellColor;
-    half3 _BgColor;
+    half4 _LineColor;
+    half3 _CellColorGamma;
+    half3 _BgColorGamma;
 
-    float _CellExponent;
-    float _CellThreshold;
+    half _CellExponent;
+    half _Blend;
 
     half4 frag(v2f_img i) : SV_Target
     {
@@ -71,16 +70,20 @@ Shader "Hidden/Kino/Voronoi/Contour"
         float ng = sqrt(dot(ng1, ng1) + dot(ng2, ng2));
 
         // thresholding
-        float edge = ng > _NormalTexture_TexelSize.x * 2.5;
+        float edge = saturate((ng - _NormalTexture_TexelSize.x * 2) * 100);
 
-        // fill the cell if source color is high
-        half3 src = tex2D(_ColorTexture, i.uv).rgb;
-        half fill = pow(Luminance(src), _CellExponent);
-        fill = min(fill + (Luminance(src) > _CellThreshold), 1);
+        // cell level
+        half cl = pow(Luma(tex2D(_ColorTexture, i.uv).rgb), _CellExponent);
 
-        // combine results
-        half3 cf = lerp(lerp(_BgColor, _CellColor, fill), _LineColor, edge);
-        return half4(GammaToLinearSpace(cf), 1);
+        // cell color
+        half3 cc = ConvertToLinear(lerp(_BgColorGamma, _CellColorGamma, cl));
+
+        // combined color
+        half3 combined = lerp(cc, _LineColor.rgb, edge * _LineColor.a);
+
+        // blend with the source image
+        half4 source = tex2D(_MainTex, i.uv);
+        return half4(lerp(source.rgb, combined, _Blend), source.a);
     }
 
     ENDCG
