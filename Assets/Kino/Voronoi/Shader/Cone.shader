@@ -81,7 +81,11 @@ Shader "Hidden/Kino/Voronoi/Cone"
 
         // cone vertex position (without transfomation)
         float4 vpos = v.vertex * float4(2, _Aspect * 2, 1, 1);
+        #if UNITY_UV_STARTS_AT_TOP
+        vpos.xy += float2(-1, 1) + spos * float2(2, -2);
+        #else
         vpos.xy += spos * 2 - 1;
+        #endif
 
         // normal vector (remap position to 0-1 range)
         float3 vnrm = v.vertex.xyz * float3(0.5, 0.5, 1) + float3(0.5, 0.5, 0);
@@ -90,7 +94,7 @@ Shader "Hidden/Kino/Voronoi/Cone"
         float thr = lerp(_RangeMin, _RangeMax, Random01(id, 2));
 
         // sample source color and reject the vertex if it's under the threshold
-        half3 col = tex2D(_Source, spos).rgb;
+        half3 col = tex2Dlod(_Source, float4(spos, 0, 0)).rgb;
         vpos.xy += (Luma(col) < thr) * 10000;
 
         // shader output
@@ -101,7 +105,7 @@ Shader "Hidden/Kino/Voronoi/Cone"
         return o;
     }
 
-    FragOutput frag(v2f i) : SV_Target
+    FragOutput frag(v2f i)
     {
         FragOutput o;
         o.color = i.color;
@@ -114,6 +118,7 @@ Shader "Hidden/Kino/Voronoi/Cone"
     {
         Pass
         {
+            Cull Off
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
