@@ -32,7 +32,7 @@ namespace Kino
         #region Editable properties
 
         /// Line color
-        Color lineColor {
+        public Color lineColor {
             get { return _lineColor; }
             set { _lineColor = value; }
         }
@@ -41,7 +41,7 @@ namespace Kino
         Color _lineColor = Color.white;
 
         /// Cell color
-        Color cellColor {
+        public Color cellColor {
             get { return _cellColor; }
             set { _cellColor = value; }
         }
@@ -50,7 +50,7 @@ namespace Kino
         Color _cellColor = Color.white;
 
         /// Background color
-        Color backgroundColor {
+        public Color backgroundColor {
             get { return _backgroundColor; }
             set { _backgroundColor = value; }
         }
@@ -59,7 +59,7 @@ namespace Kino
         Color _backgroundColor = Color.black;
 
         /// Minimum value of the input range
-        float rangeMin {
+        public float rangeMin {
             get { return _rangeMin; }
             set { _rangeMin = value; }
         }
@@ -68,7 +68,7 @@ namespace Kino
         float _rangeMin = 0;
 
         /// Maximum value of the input range
-        float rangeMax {
+        public float rangeMax {
             get { return _rangeMax; }
             set { _rangeMax = value; }
         }
@@ -77,7 +77,7 @@ namespace Kino
         float _rangeMax = 1;
 
         /// Coefficient for the exponential gradient curve
-        float cellExponent {
+        public float cellExponent {
             get { return _cellExponent; }
             set { _cellExponent = value; }
         }
@@ -86,7 +86,7 @@ namespace Kino
         float _cellExponent = 1;
 
         /// Determines how many time it repeats the process
-        int iteration {
+        public int iteration {
             get { return _iteration; }
             set { _iteration = value; }
         }
@@ -95,7 +95,7 @@ namespace Kino
         int _iteration = 4;
 
         /// Opacity level (blend ratio)
-        float opacity {
+        public float opacity {
             get { return _opacity; }
             set { _opacity = value; }
         }
